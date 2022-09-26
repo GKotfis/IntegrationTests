@@ -1,20 +1,21 @@
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace Client.IntegrationTests;
 
-public class ClientIntegrationTests : IClassFixture<WebApplicationFactory<Program>>
+public class ClientIntegrationTests
+    : IClassFixture<ContainerFixture>
 {
-    private readonly IClientService _clientService;
+    private readonly ServiceProvider _serviceProvider;
 
-    public ClientIntegrationTests(WebApplicationFactory<Program> factory)
+    public ClientIntegrationTests(ContainerFixture fixture)
     {
-        _clientService = factory.Services.GetRequiredService<IClientService>();
+        _serviceProvider = fixture.ServiceProvider;
     }
-    
+
     [Fact]
     public async Task ConnectTo_Test()
     {
-        await _clientService.ConnectTo();
+        var sut = _serviceProvider.GetService<IClientService>();
+        await sut!.ConnectTo();
     }
 }
